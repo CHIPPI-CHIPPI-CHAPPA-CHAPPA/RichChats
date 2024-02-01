@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App with Firebase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #chat-container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        #chat-container p {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <h1>Chat App</h1>
+        <div id="chat-messages"></div>
+        <form id="chat-form">
+            <label for="message">Message:</label>
+            <input type="text" id="message" name="message" required>
+            <label for="status">Status:</label>
+            <select id="status" name="status">
+                <option value="Rich">Rich</option>
+                <option value="Poor">Poor</option>
+            </select>
+            <button type="button" onclick="sendMessage()">Send</button>
+        </form>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyApX6CkTuolDhzKSGshW7nDA_qRJBwfnEs",
+            authDomain: "richchats-295f0.firebaseapp.com",
+            projectId: "richchats-295f0",
+            storageBucket: "richchats-295f0.appspot.com",
+            messagingSenderId: "221024421022",
+            appId: "1:221024421022:web:f8835154e5fbcacfa5e78f"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const database = firebase.database();
+        const chatMessages = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message');
+        const statusInput = document.getElementById('status');
+
+        function sendMessage() {
+            const message = messageInput.value;
+            const status = statusInput.value || "Unknown";
+
+            if (message) {
+                const username = "Anonymous";
+                database.ref('messages').push({
+                    username: username,
+                    message: message,
+                    status: status
+                });
+
+                messageInput.value = '';
+            }
+        }
+
+        function appendMessage(username, message, status) {
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>${username} (${status}):</strong> ${message}`;
+            chatMessages.appendChild(p);
+
+            // Scroll to the bottom after appending a new message
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function initializeChat() {
+            console.log("Initializing chat...");
+            database.ref('messages').on('child_added', snapshot => {
+                console.log("New message received:", snapshot.val());
+                const message = snapshot.val();
+                appendMessage(message.username, message.message, message.status);
+            });
+        }
+
+        // Initialize chat on page load
+        initializeChat();
+
+        // Handle Enter key press
+        messageInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

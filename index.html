@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RichWeb</title>
+    <title>Rich Web | Poor Web</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,6 +46,7 @@
 
         #chat-container {
             display: none;
+            scrollbar-color: black;
         }
 
         #chat-container p {
@@ -75,23 +76,40 @@
             border: none;
             margin: 0;
         }
+
+        #name-container{
+            background-color: white;
+            max-height: 400px;
+            height: 150px;
+            width: 350px;
+            border-radius: 5px;
+        }
+
+        #name-form{
+            margin-left: 10px;
+        }
+
+        #entername{
+            margin-left: 40px;
+        }
+
+        #richpoorweb{
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
-    <div id="login-container">
-        <h1>Login or Sign Up</h1>
-        <form id="login-form">
-            <label for="login-username">Username:</label>
-            <input type="text" id="login-username" name="login-username" required>
-            <label for="login-password">Password:</label><br><br>
-            <input type="password" id="login-password" name="login-password" required>
-            <button id="login" type="button" onclick="login()">Login</button>
-            <button id="signup" type="button" onclick="signup()">Sign Up</button>
+    <div id="name-container">
+        <h1 id="entername">Please Enter Your Name</h1>
+        <form id="name-form">
+            <label for="username">Name:</label>
+            <input type="text" id="username" name="username" required>
+            <button type="button" onclick="startChatting()">Start Chatting</button>
         </form>
     </div>
 
     <div id="chat-container">
-        <h1>Rich Web</h1>
+        <h1 id="richpoorweb">Rich Web | Poor Web</h1>
         <div id="chat-messages"></div>
         <form id="chat-form">
             <label for="message">Message:</label>
@@ -101,17 +119,14 @@
                 <option value="Rich">Rich</option>
                 <option value="Poor">Poor</option>
             </select>
-            <button id="sendclearlogout" type="button" onclick="sendMessage()">Send</button>
-            <button id="sendclearlogout" type="button" onclick="clearMessages()">Clear Messages</button>
-            <button id="sendclearlogout" type="button" onclick="logout()">Logout</button>
+            <button type="button" onclick="sendMessage()">Send</button>
+            <button type="button" onclick="clearMessages()">Clear Messages</button>
         </form>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
     <script>
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyApX6CkTuolDhzKSGshW7nDA_qRJBwfnEs",
             authDomain: "richchats-295f0.firebaseapp.com",
@@ -124,60 +139,25 @@
 
         firebase.initializeApp(firebaseConfig);
 
-        // Firebase components
         const database = firebase.database();
-        const auth = firebase.auth();
-
-        // DOM elements
         const chatMessages = document.getElementById('chat-messages');
         const messageInput = document.getElementById('message');
         const statusInput = document.getElementById('status');
-        const loginUsernameInput = document.getElementById('login-username');
-        const loginPasswordInput = document.getElementById('login-password');
-        const loginContainer = document.getElementById('login-container');
+        const usernameInput = document.getElementById('username');
+        const nameContainer = document.getElementById('name-container');
         const chatContainer = document.getElementById('chat-container');
 
-        let currentUsername = '';
+        function startChatting() {
+            const username = usernameInput.value;
+            if (username.trim() !== "") {
+                nameContainer.style.display = 'none';
+                chatContainer.style.display = 'block';
 
-        function login() {
-            const username = loginUsernameInput.value;
-            const password = loginPasswordInput.value;
 
-            auth.signInWithEmailAndPassword(username + '@example.com', password)
-                .then(() => {
-                    currentUsername = username;
-                    loginContainer.style.display = 'none';
-                    chatContainer.style.display = 'block';
-                    initializeChat();
-                })
-                .catch((error) => {
-                    alert(error.message);
-                });
-        }
-
-        function signup() {
-            const username = loginUsernameInput.value;
-            const password = loginPasswordInput.value;
-
-            auth.createUserWithEmailAndPassword(username + '@example.com', password)
-                .then(() => {
-                    currentUsername = username;
-                    loginContainer.style.display = 'none';
-                    chatContainer.style.display = 'block';
-                    initializeChat();
-                })
-                .catch((error) => {
-                    alert(error.message);
-                });
-        }
-
-        function logout() {
-            auth.signOut().then(() => {
-                chatContainer.style.display = 'none';
-                loginContainer.style.display = 'block';
-            }).catch((error) => {
-                console.error(error.message);
-            });
+                initializeChat();
+            } else {
+                alert("Please enter your name to start chatting.");
+            }
         }
 
         function sendMessage() {
@@ -185,8 +165,9 @@
             const status = statusInput.value || "Unknown";
 
             if (message) {
+                const username = usernameInput.value || "Anonymous";
                 database.ref('messages').push({
-                    username: currentUsername,
+                    username: username,
                     message: message,
                     status: status
                 });
@@ -200,38 +181,37 @@
             p.innerHTML = `<strong>${username} (${status}):</strong> ${message}`;
             chatMessages.appendChild(p);
 
+
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         function initializeChat() {
+            console.log("Initializing chat...");
             database.ref('messages').on('child_added', snapshot => {
+                console.log("New message received:", snapshot.val());
                 const message = snapshot.val();
                 appendMessage(message.username, message.message, message.status);
             });
         }
 
         function clearMessages() {
+
             chatMessages.innerHTML = '';
         }
 
+        
+        usernameInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                startChatting();
+            }
+        });
+
+        
         messageInput.addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
                 sendMessage();
-            }
-        });
-
-        loginUsernameInput.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                login();
-            }
-        });
-
-        loginPasswordInput.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                login();
             }
         });
     </script>

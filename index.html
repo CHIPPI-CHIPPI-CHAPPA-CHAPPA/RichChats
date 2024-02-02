@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rich Web</title>
+    <title>RichWeb</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            font-style: italic;
             background-color: cyan;
             margin: 0;
             padding: 0;
@@ -16,8 +17,8 @@
             height: 100vh;
         }
 
+        #login-container,
         #chat-container {
-            display: none; /* Initially hide the chat container */
             max-width: 400px;
             margin: auto;
             padding: 20px;
@@ -28,27 +29,64 @@
             max-height: 400px;
         }
 
+        #login-username{
+            border-radius: 5px;
+            border: solid;
+        }
+
+        #login-container {
+            display: block;
+        }
+
+        #login-password{
+            border-radius: 5px;
+            border: solid;
+            margin-left: 82px;
+        }
+
+        #chat-container {
+            display: none;
+        }
+
         #chat-container p {
             margin: 8px 0;
         }
 
-        #name-container {
-            max-width: 400px;
-            margin: auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        #login{
+            margin: 0;
+            color: black;
+            background: linear-gradient(to right, #d6d6d6 , #fae0de);
+            border-radius: 10px;
+            border: none;
+        }
+
+        #signup{
+            margin: 0;
+            color: black;
+            background: linear-gradient(to right, #d6d6d6 , #fae0de);
+            border-radius: 10px;
+            border: none;
+        }
+
+        #sendclearlogout {
+            color: black;
+            background: linear-gradient(to right, #d6d6d6 , #fae0de);
+            border-radius: 10px;
+            border: none;
+            margin: 0;
         }
     </style>
 </head>
 <body>
-    <div id="name-container">
-        <h1>Enter Your Name</h1>
-        <form id="name-form">
-            <label for="username">Name:</label>
-            <input type="text" id="username" name="username" required>
-            <button type="button" onclick="startChatting()">Start Chatting</button>
+    <div id="login-container">
+        <h1>Login or Sign Up</h1>
+        <form id="login-form">
+            <label for="login-username">Username:</label>
+            <input type="text" id="login-username" name="login-username" required>
+            <label for="login-password">Password:</label><br><br>
+            <input type="password" id="login-password" name="login-password" required>
+            <button id="login" type="button" onclick="login()">Login</button>
+            <button id="signup" type="button" onclick="signup()">Sign Up</button>
         </form>
     </div>
 
@@ -63,45 +101,83 @@
                 <option value="Rich">Rich</option>
                 <option value="Poor">Poor</option>
             </select>
-            <button type="button" onclick="sendMessage()">Send</button>
-            <button type="button" onclick="clearMessages()">Clear Messages</button>
+            <button id="sendclearlogout" type="button" onclick="sendMessage()">Send</button>
+            <button id="sendclearlogout" type="button" onclick="clearMessages()">Clear Messages</button>
+            <button id="sendclearlogout" type="button" onclick="logout()">Logout</button>
         </form>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
     <script>
+        // Firebase configuration
         const firebaseConfig = {
-  apiKey: "AIzaSyApX6CkTuolDhzKSGshW7nDA_qRJBwfnEs",
-  authDomain: "richchats-295f0.firebaseapp.com",
-  projectId: "richchats-295f0",
-  storageBucket: "richchats-295f0.appspot.com",
-  messagingSenderId: "221024421022",
-  appId: "1:221024421022:web:f8835154e5fbcacfa5e78f"
+            apiKey: "AIzaSyApX6CkTuolDhzKSGshW7nDA_qRJBwfnEs",
+            authDomain: "richchats-295f0.firebaseapp.com",
+            databaseURL: "https://richchats-295f0-default-rtdb.firebaseio.com",
+            projectId: "richchats-295f0",
+            storageBucket: "richchats-295f0.appspot.com",
+            messagingSenderId: "221024421022",
+            appId: "1:221024421022:web:f8835154e5fbcacfa5e78f"
         };
 
         firebase.initializeApp(firebaseConfig);
 
+        // Firebase components
         const database = firebase.database();
+        const auth = firebase.auth();
+
+        // DOM elements
         const chatMessages = document.getElementById('chat-messages');
         const messageInput = document.getElementById('message');
         const statusInput = document.getElementById('status');
-        const usernameInput = document.getElementById('username');
-        const nameContainer = document.getElementById('name-container');
+        const loginUsernameInput = document.getElementById('login-username');
+        const loginPasswordInput = document.getElementById('login-password');
+        const loginContainer = document.getElementById('login-container');
         const chatContainer = document.getElementById('chat-container');
 
-        function startChatting() {
-            const username = usernameInput.value;
-            if (username.trim() !== "") {
-                // Show the chat container
-                nameContainer.style.display = 'none';
-                chatContainer.style.display = 'block';
+        let currentUsername = '';
 
-                // Initialize chat after obtaining the username
-                initializeChat();
-            } else {
-                alert("Please enter your name to start chatting.");
-            }
+        function login() {
+            const username = loginUsernameInput.value;
+            const password = loginPasswordInput.value;
+
+            auth.signInWithEmailAndPassword(username + '@example.com', password)
+                .then(() => {
+                    currentUsername = username;
+                    loginContainer.style.display = 'none';
+                    chatContainer.style.display = 'block';
+                    initializeChat();
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
+        }
+
+        function signup() {
+            const username = loginUsernameInput.value;
+            const password = loginPasswordInput.value;
+
+            auth.createUserWithEmailAndPassword(username + '@example.com', password)
+                .then(() => {
+                    currentUsername = username;
+                    loginContainer.style.display = 'none';
+                    chatContainer.style.display = 'block';
+                    initializeChat();
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
+        }
+
+        function logout() {
+            auth.signOut().then(() => {
+                chatContainer.style.display = 'none';
+                loginContainer.style.display = 'block';
+            }).catch((error) => {
+                console.error(error.message);
+            });
         }
 
         function sendMessage() {
@@ -109,9 +185,8 @@
             const status = statusInput.value || "Unknown";
 
             if (message) {
-                const username = usernameInput.value || "Anonymous";
                 database.ref('messages').push({
-                    username: username,
+                    username: currentUsername,
                     message: message,
                     status: status
                 });
@@ -125,37 +200,38 @@
             p.innerHTML = `<strong>${username} (${status}):</strong> ${message}`;
             chatMessages.appendChild(p);
 
-            // Scroll to the bottom after appending a new message
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         function initializeChat() {
-            console.log("Initializing chat...");
             database.ref('messages').on('child_added', snapshot => {
-                console.log("New message received:", snapshot.val());
                 const message = snapshot.val();
                 appendMessage(message.username, message.message, message.status);
             });
         }
 
         function clearMessages() {
-            // Clear all messages in the chat
             chatMessages.innerHTML = '';
         }
 
-        // Handle Enter key press
-        usernameInput.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                startChatting();
-            }
-        });
-
-        // Handle Enter key press for sending messages
         messageInput.addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
                 sendMessage();
+            }
+        });
+
+        loginUsernameInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                login();
+            }
+        });
+
+        loginPasswordInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                login();
             }
         });
     </script>

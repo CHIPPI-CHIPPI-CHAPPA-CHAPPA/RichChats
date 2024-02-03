@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rich Web | Poor Web</title>
+    <link rel="icon" href="Richweb.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
     <style>
+        #chat-messages {
+            overflow: hidden;
+        }
+
         body {
             font-family: Arial, sans-serif;
             font-style: italic;
-            background-color: cyan;
             margin: 0;
             padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
+            transition: background-color 0.5s;
         }
 
-        #login-container,
-        #chat-container {
+        .container {
             max-width: 400px;
             margin: auto;
             padding: 20px;
@@ -27,88 +33,133 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             max-height: 400px;
+            transition: background-color 0.5s;
         }
 
-        #login-username{
-            border-radius: 5px;
-            border: solid;
-        }
-
-        #login-container {
+        #name-container {
             display: block;
-        }
-
-        #login-password{
-            border-radius: 5px;
-            border: solid;
-            margin-left: 82px;
         }
 
         #chat-container {
             display: none;
-            scrollbar-color: black;
+            scrollbar-width: thin;
+            scrollbar-color: #888 #f1f1f1;
+        }
+
+        #login-username,
+        #login-password,
+        #username {
+            border-radius: 5px;
+            border: solid;
+            padding: 8px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #login,
+        #signup,
+        #start-chatting,
+        #send,
+        #clear,
+        #logout,
+        #toggle-mode {
+            color: black;
+            background: linear-gradient(to right, #d6d6d6, #fae0de);
+        }
+
+        #send,
+        #clear,
+        #logout {
+            margin-top: 0;
+        }
+
+        #login:hover,
+        #signup:hover,
+        #start-chatting:hover,
+        #send:hover,
+        #clear:hover,
+        #logout:hover,
+        #toggle-mode:hover {
+            filter: brightness(1.1);
         }
 
         #chat-container p {
             margin: 8px 0;
         }
 
-        #login{
-            margin: 0;
-            color: black;
-            background: linear-gradient(to right, #d6d6d6 , #fae0de);
-            border-radius: 10px;
-            border: none;
-        }
-
-        #signup{
-            margin: 0;
-            color: black;
-            background: linear-gradient(to right, #d6d6d6 , #fae0de);
-            border-radius: 10px;
-            border: none;
-        }
-
-        #sendclearlogout {
-            color: black;
-            background: linear-gradient(to right, #d6d6d6 , #fae0de);
-            border-radius: 10px;
-            border: none;
-            margin: 0;
-        }
-
-        #name-container{
-            background-color: white;
-            max-height: 400px;
-            height: 150px;
-            width: 350px;
-            border-radius: 5px;
-        }
-
-        #name-form{
-            margin-left: 10px;
-        }
-
-        #entername{
-            margin-left: 40px;
-        }
-
-        #richpoorweb{
+        #richpoorweb {
             font-style: italic;
+        }
+
+        /* Firefox */
+        #chat-container::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        #chat-container::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 6px;
+        }
+
+        #chat-container::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+        }
+
+        /* Firefox */
+        #chat-container {
+            scrollbar-width: thin;
+            scrollbar-color: #888 #f1f1f1;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #2b2b2b;
+        }
+
+        .container.dark-mode {
+            background-color: #2b2b2b;
+            color: white;
+        }
+
+        #chat-container.dark-mode p {
+            color: white
+        }
+
+        #toggle-mode.dark-mode {
+            color: white;
+            background: black;
+        }
+
+        #toggle-mode{
+            color: black;
         }
     </style>
 </head>
+
 <body>
-    <div id="name-container">
+    <button id="toggle-mode" onclick="toggleMode()">Dark Mode</button>
+
+    <div id="name-container" class="container">
         <h1 id="entername">Please Enter Your Name</h1>
         <form id="name-form">
             <label for="username">Name:</label>
             <input type="text" id="username" name="username" required>
-            <button type="button" onclick="startChatting()">Start Chatting</button>
+            <button class="button" type="button" onclick="startChatting()">Start Chatting</button>
         </form>
     </div>
 
-    <div id="chat-container">
+    <div id="chat-container" class="container">
         <h1 id="richpoorweb">Rich Web | Poor Web</h1>
         <div id="chat-messages"></div>
         <form id="chat-form">
@@ -119,8 +170,8 @@
                 <option value="Rich">Rich</option>
                 <option value="Poor">Poor</option>
             </select>
-            <button type="button" onclick="sendMessage()">Send</button>
-            <button type="button" onclick="clearMessages()">Clear Messages</button>
+            <button class="button" id="send" type="button" onclick="sendMessage()">Send</button>
+            <button class="button" id="clear" type="button" onclick="clearMessages()">Clear Messages</button>
         </form>
     </div>
 
@@ -152,8 +203,6 @@
             if (username.trim() !== "") {
                 nameContainer.style.display = 'none';
                 chatContainer.style.display = 'block';
-
-
                 initializeChat();
             } else {
                 alert("Please enter your name to start chatting.");
@@ -180,8 +229,6 @@
             const p = document.createElement('p');
             p.innerHTML = `<strong>${username} (${status}):</strong> ${message}`;
             chatMessages.appendChild(p);
-
-
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
@@ -195,11 +242,17 @@
         }
 
         function clearMessages() {
-
             chatMessages.innerHTML = '';
         }
 
-        
+        function toggleMode() {
+            document.body.classList.toggle('dark-mode');
+            document.querySelectorAll('.container').forEach(container => {
+                container.classList.toggle('dark-mode');
+            });
+            document.getElementById('toggle-mode').classList.toggle('dark-mode');
+        }
+
         usernameInput.addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -207,7 +260,6 @@
             }
         });
 
-        
         messageInput.addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -216,4 +268,5 @@
         });
     </script>
 </body>
+
 </html>

@@ -1,0 +1,164 @@
+#chat-messages {
+    overflow: hidden;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-style: italic;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    transition: background-color 0.5s;
+}
+
+.container {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 400px;
+    transition: background-color 0.5s;
+}
+
+#name-container {
+    display: block;
+}
+
+#chat-container {
+    display: none;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+#login-username,
+#login-password,
+#username {
+    border-radius: 5px;
+    border: solid;
+    padding: 8px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+#button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#login,
+#signup,
+#start-chatting,
+#Send,
+#clear,
+#logout,
+#toggle-mode {
+    color: black;
+    background: linear-gradient(to right, #d6d6d6, #fae0de);
+    border-radius: 5px;
+    font-style: bold;
+    font-size: 20px;
+}
+
+#clear,
+#logout,
+#Send {
+    margin-top: 0;
+}
+
+#Send{
+    color: black;
+    background: linear-gradient(to right, #d6d6d6, #fae0de);
+}
+
+
+#login:hover,
+#signup:hover,
+#start-chatting:hover,
+#send:hover,
+#clear:hover,
+#logout:hover,
+#toggle-mode:hover,
+#button:hover {
+    filter: brightness(1.1);
+    transform: translateX(5px);
+    transition: 0.1s ease all;
+}
+
+#chat-container p {
+    margin: 8px 0;
+}
+
+#richpoorweb {
+    font-style: italic;
+}
+
+#chat-container::-webkit-scrollbar {
+    width: 12px;
+}
+
+#chat-container::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 6px;
+}
+
+#chat-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+#chat-container {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+body.dark-mode {
+    background-color: #2b2b2b;
+}
+
+.container.dark-mode {
+    background-color: #2b2b2b;
+    color: white;
+}
+
+#chat-container.dark-mode p {
+    color: white
+}
+
+#toggle-mode.dark-mode {
+    color: white;
+    background: black;
+}
+
+#toggle-mode{
+    color: black;
+}
+
+#message{
+    border-radius: 5px;
+    width: 50%;
+    height: 30px;
+}
+
+#messagelabel{
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#status{
+    border-radius: 5px;
+    border: solid;
+    border-color: black;
+    size: 150px;
+    font-size: 20px;
+}

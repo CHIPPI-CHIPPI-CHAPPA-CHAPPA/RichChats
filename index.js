@@ -88,32 +88,3 @@ messageInput.addEventListener('keydown', function (event) {
     }
 });
 
-
-const swearWords = ['Shit', 'shit', 'Sheet'];
-
-function sendMessage() {
-
-    const messageInput = document.getElementById('message');
-
-    const messageValue = messageInput.value;
-
-    const containsSwear = swearWords.some(word => messageValue.toLowerCase().includes(word.toLowerCase()));
-
-    
-    if (containsSwear) {
-        messageInput.value = 'Filtered out';
-    } else {
-
-        const message = {
-            content: messageValue,
-        };
-
-        const databaseRef = firebase.database().ref('/your_database_path');
-        databaseRef.push(message);
-
-        messageInput.value = '';
-    }
-}
-
-
-// I'm getting tired of adding semi-colons at the end but i cant stop now because it will look bad

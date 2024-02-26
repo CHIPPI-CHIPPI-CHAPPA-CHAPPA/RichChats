@@ -182,7 +182,7 @@ function addUserToList(userId, user, status) {
     const userList = document.getElementById('user-list');
     const userItem = document.createElement('li');
 
-    const username = user.displayName || extractUsernameFromEmail(user.email) || "Anonymous";
+    const username = user.displayName
     userItem.textContent = `${username} (${status})`;
     userItem.id = userId;
 

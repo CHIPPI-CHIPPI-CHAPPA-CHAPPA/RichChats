@@ -13,14 +13,36 @@
 <body>
     <button id="toggle-mode" onclick="toggleMode()">Dark Mode</button>
 
-    <div id="name-container" class="container">
-        <h1 id="entername">Please Enter Your Name</h1>
-        <form id="name-form">
-            <label for="username">Name:</label>
-            <input type="text" id="username" name="username" required>
-            <button id="button" type="button" onclick="startChatting()">Start Chatting</button>
-        </form>
-    </div>
+
+<div id="signup-container" class="container">
+    <h1 id="signup-title">Sign Up</h1>
+    <form id="signup-form">
+        <label for="signup-username">Username:</label>
+        <input type="text" id="signup-username" name="signup-username" required>
+        <label for="signup-email">Email:</label>
+        <input type="email" id="signup-email" name="signup-email" required>
+        <label for="signup-password">Password:</label>
+        <input type="password" id="signup-password" name="signup-password" required>
+        <button id="signup-button" type="button" onclick="signup()">Sign Up</button>
+    </form>
+</div>
+
+<div id="login-container" class="container">
+    <h1 id="login-title">Login</h1>
+    <form id="login-form">
+        <label for="login-email">Email:</label>
+        <input type="email" id="login-email" name="login-email" required>
+        <label for="login-password">Password:</label>
+        <input type="password" id="login-password" name="login-password" required>
+        <button id="login-button" type="button" onclick="login()">Login</button>
+    </form>
+</div>
+<div id="user-list-container" class="container">
+    <h1 id="user-list-title">User List</h1>
+    <ul id="user-list"></ul>
+</div>
+
+
 
     <div id="chat-container" class="container">
         <h1 id="richpoorweb">Poor Web</h1>
@@ -40,6 +62,7 @@
 
     <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
     <script src="index.js"></script>
 </body>
 </html>

@@ -163,3 +163,6 @@ body.dark-mode {
     size: 150px;
     font-size: 20px;
 }
+#chat-container{
+    margin-right: 40%;
+}

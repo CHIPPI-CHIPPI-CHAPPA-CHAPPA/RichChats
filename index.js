@@ -102,7 +102,7 @@ function clearMessages() {
     setTimeout(()=> {
         chatMessages.innerHTML = "  ";
      }
-     ,1000);
+     ,100);
 }
 
 function toggleMode() {
@@ -183,9 +183,8 @@ function addUserToList(userId, user, status) {
     const userItem = document.createElement('li');
 
     const username = user.displayName
-    userItem.textContent = `${username} (${status})`;
+    userItem.textContent = `${username}`;
     userItem.id = userId;
 
     userList.appendChild(userItem);
 }
-
